@@ -1,5 +1,6 @@
 #!/bin/bash -xe
-exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+#adjust for your setup
+#exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 echo "Installing Git + System Updates"
   
@@ -7,7 +8,10 @@ apt-get update
 apt-get install git jq netcat
 
 echo "Creating cribl user"
-adduser cribl -d /home/cribl -c "Cribl LogStream User" -m
+adduser cribl
+mkdir /home/cribl
+chown -R cribl:cribl /home/cribl
+chmod 755 /home/cribl
 usermod -aG sudo cribl
 
 echo "Setup SSH access"
