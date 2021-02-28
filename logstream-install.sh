@@ -1,6 +1,4 @@
 #!/bin/bash -xe
-#adjust for your setup
-#exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 echo "Installing Git + System Updates"
   
@@ -8,6 +6,7 @@ apt-get update
 apt-get install git jq netcat
 
 echo "Creating cribl user"
+
 adduser cribl
 mkdir /home/cribl
 chown -R cribl:cribl /home/cribl
@@ -15,11 +14,13 @@ chmod 755 /home/cribl
 usermod -aG sudo cribl
 
 echo "Setup SSH access"
+
 mkdir /home/cribl/.ssh
 chmod 700 /home/cribl/.ssh
 chown -R cribl.cribl /home/cribl/.ssh
 
 echo "Setup MOTD"
+
 echo -e "\n" >> /etc/motd
 echo "██╗      ██████╗  ██████╗ ███████╗████████╗██████╗ ███████╗ █████╗ ███╗   ███╗" >> /etc/motd
 echo "██║     ██╔═══██╗██╔════╝ ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██╔══██╗████╗ ████║" >> /etc/motd
@@ -29,13 +30,15 @@ echo "███████╗╚██████╔╝╚██████�
 echo "╚══════╝ ╚═════╝  ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝" >> /etc/motd
 echo -e "\n" >> /etc/motd
 
-echo "Install LogStream"
+echo "Installing LogStream"
+
 mkdir -p /opt/cribl
 VER_STRING=$(curl -s https://cdn.cribl.io/versions.json | jq -r .version)
 curl -Lso - $(curl -s https://cdn.cribl.io/dl/latest) | tar zxvf - -C /opt
 chown -R cribl.cribl /opt/cribl
 
 echo "Password reset placeholder"
+
 mkdir -p /opt/cribl/local/cribl/auth
 touch /opt/cribl/local/cribl/auth/users.json
 chown -R cribl.cribl /opt/cribl
@@ -50,10 +53,10 @@ touch /opt/cribl/log/cribl.log
 chown -R cribl.cribl /opt/cribl/log
 
 # when you're ready- recommend a health check (check licenses) before setting
-#echo "Set and enable autostart"
+echo "Skipping enable autostart - do this manually after testing installation"
 #/opt/cribl/bin/cribl boot-start enable -m systemd -u cribl 
 #systemctl enable cribl
 #systemctl daemon-reload
 #systemctl start cribl" 
 
-echo "Cribl LogStream $VER_STRING install completed."
+echo "Cribl LogStream $VER_STRING install complete"
