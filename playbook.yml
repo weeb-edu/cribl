@@ -1,0 +1,46 @@
+---
+- name: Install Cribl LogStream Master
+  hosts: localhost
+
+  tasks:
+  - name: Ensure git package is installed
+    package:
+     name: git
+     state: present
+
+  - name: Ensure "cribl" user exists
+    become: yes
+     user:
+      name: cribl
+      comment: Cribl LogStream
+
+  - name: Ensure "/opt/cribl" exists
+    become: yes
+    file:
+      path: /opt/cribl
+      state: directory
+      owner: cribl
+      group: cribl
+      mode: 0700
+
+  - name: Download and decompress LogStream bits
+    become: yes
+    unarchive:
+      src: "{{ lookup('url', 'https://cdn.cribl.io/dl/latest') }}"
+      dest: /opt
+      mode: 0755
+      remote_src: yes
+      owner: cribl
+      group: cribl
+      creates: /opt/cribl
+
+  - name: Enable LogStream boot start
+    become: yes
+    shell:
+      cmd: /opt/cribl/bin/cribl boot-start enable -u cribl
+
+  - name: Start LogStream!
+    become: yes
+    service:
+      name: cribl
+      state: started
