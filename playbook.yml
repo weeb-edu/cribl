@@ -10,7 +10,7 @@
 
   - name: Ensure "cribl" user exists
     become: yes
-     user:
+    user:
       name: cribl
       comment: Cribl LogStream
 
