@@ -1,6 +1,6 @@
 ---
 - name: Install Cribl LogStream Master
-  hosts: localhost
+  hosts: master
 
   tasks:
   - name: Ensure git package is installed
@@ -14,15 +14,6 @@
       name: cribl
       comment: Cribl LogStream
 
-  - name: Ensure "/opt/cribl" exists
-    become: yes
-    file:
-      path: /opt/cribl
-      state: directory
-      owner: cribl
-      group: cribl
-      mode: 0700
-
   - name: Download and decompress LogStream bits
     become: yes
     unarchive:
@@ -34,13 +25,16 @@
       group: cribl
       creates: /opt/cribl
 
-  - name: Enable LogStream boot start
+  - name: Enable LogStream boot start with systemd and ignore error if already set up
     become: yes
-    shell:
-      cmd: /opt/cribl/bin/cribl boot-start enable -u cribl
+    expect:
+      command: /opt/cribl/bin/cribl boot-start enable -m systemd -u cribl
+      responses: 
+        (.*)replace it with a new one(.*): "n"
 
-  - name: Start LogStream!
+  - name: Start LogStream using systemd "sudo systemctl start cribl.service"
     become: yes
-    service:
-      name: cribl
+    ansible.builtin.systemd:
       state: started
+      name: cribl
+      
