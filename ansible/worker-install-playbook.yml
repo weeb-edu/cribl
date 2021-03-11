@@ -1,0 +1,35 @@
+#
+# recommend instead of running this playbook, to run the curl command to install from the worker node directly from the command line.
+#
+# however, this playbook works
+#
+# this file references a worker identified in the provided hosts file
+---
+- name: Bootstrap LogStream Worker
+  hosts: worker
+  gather_facts: False
+  vars:
+    https: False
+    master: "<master-ip-here>"
+    master_port: "9000"
+    token: "criblmaster"
+    worker_group: "default"
+
+  tasks:
+  - name: Download Bootstrap script
+    become: true
+    get_url:
+      url: "http{{ (https) | ternary('s', '') }}://{{ master }}:{{ master_port }}/init/install-w
+orker.sh?token={{ token }}&group={{ worker_group }}"
+      dest: /tmp/install-worker.sh
+      mode: u+rwx
+
+  - name: Run installer
+    become: yes
+    shell:
+      /tmp/install-worker.sh
+
+  - name: Remove temp file
+    file:
+      path: /tmp/install-worker.sh
+      state: absent
