@@ -4,6 +4,8 @@
 # however, this playbook works
 #
 # this file references a worker identified in the provided hosts file
+# Assumption: you have already change the mode on the master to Mode: master, and ports 4200, 9000 are open between the master and worker
+#
 ---
 - name: Bootstrap LogStream Worker
   hosts: worker
