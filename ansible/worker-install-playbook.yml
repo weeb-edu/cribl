@@ -1,11 +1,20 @@
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 #
-# recommend instead of running this playbook, to run the curl command to install from the worker node directly from the command line.
-#
-# however, this playbook works
-#
-# this file references a worker identified in the provided hosts file
-# Assumption: you have already change the mode on the master to Mode: master, and ports 4200, 9000 are open between the master and worker
-#
+# We recommend instead of running this playbook, to run the curl command as the 
+# cribl user on the worker to install directly from the command line.
+# 
+# $ sudo curl 'http://<master-ip-or-hostname>:9000/init/install-worker.sh?token=criblmaster' | sudo sh -
+# 
+# this playbook works, however, it might hang, and hide errors while hanging. 
+# easier to just run the command above in some other sort of script pushed out to 
+# the workers if you have a lot of workers.
+# 
+# Assumption: you have already change the mode on the master to Mode: master, 
+# and ports 4200, 9000 are open between the master and worker
+# ---
+# this file references a host named worker, already referenced in the sample 
+# hosts file provided for this example
+# 
 ---
 - name: Bootstrap LogStream Worker
   hosts: worker
